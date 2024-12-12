@@ -1,25 +1,35 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Book, BookDocument } from './book.schema';
+import { Book, BookDocument } from '../schemas/book.schema';
 import { Model, Types } from 'mongoose';
+import { Author, AuthorDocument } from 'src/schemas/author.schema';
 
 @Injectable()
 export class BooksService {
-  constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
+  constructor(
+    @InjectModel(Book.name) private bookModel: Model<BookDocument>,
+    @InjectModel(Author.name) private authorModel: Model<AuthorDocument>,
+  ) {}
 
   async create(data: Partial<Book>): Promise<Book> {
+    const authorExists = await this.authorModel.findById(data.author).exec();
+    if (!authorExists) {
+      throw new NotFoundException(`Author with ID ${data.author} not found`);
+    }
+
     const newBook = new this.bookModel(data);
     return newBook.save();
   }
 
   async findAll(): Promise<Book[]> {
-    return this.bookModel.find().exec();
+    return this.bookModel.find().populate('author', 'name bio').exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<Book | null> {
-    const book = await this.bookModel.findById(id);
+    const book = await this.bookModel
+      .findById(id)
+      .populate('author', 'name bio')
+      .exec();
 
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`);

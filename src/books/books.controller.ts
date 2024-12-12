@@ -9,9 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
-import { Book } from './book.schema';
+import { Book } from '../schemas/book.schema';
 import { ObjectId, Types } from 'mongoose';
 import { ValidateObjectIdPipe } from 'src/pipes/validate-object-id.pipe';
 
