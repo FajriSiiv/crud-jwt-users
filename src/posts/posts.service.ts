@@ -1,48 +1,45 @@
 import { Injectable } from '@nestjs/common';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import { Posts, PostsDocument } from './schema/posts.schema';
 import { Model, Types } from 'mongoose';
-import { Post } from 'src/schemas/posts.schema';
-import { User } from 'src/schemas/user.schema';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel(Post.name) private postModel: Model<Post>,
-    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Posts.name) private postsModel: Model<PostsDocument>,
   ) {}
 
-  async create(postDto: {
-    title: string;
-    content: string;
-    userId: Types.ObjectId;
-  }): Promise<Post> {
-    const user = await this.userModel.findOne(postDto.userId);
-
-    const post = new this.postModel({
-      title: postDto.title,
-      content: postDto.content,
-      user: user._id,
+  createPost(createPostDto: CreatePostDto) {
+    const newPost = new this.postsModel({
+      ...createPostDto,
+      user: createPostDto.userId,
     });
-    return post.save();
+    return newPost.save();
   }
 
-  async findAllPosts(page: number = 1, limit: number = 4) {
-    const skip = (page - 1) * limit;
-
-    const posts = await this.postModel.find().skip(skip).limit(limit).exec();
-
-    const totalPosts = await this.postModel.countDocuments();
-
-    return {
-      totalPosts,
-      currentPage: page,
-      totalPage: Math.ceil(totalPosts / limit),
-      posts,
-    };
+  async getPostsByUser(userId: string) {
+    return this.postsModel.find({ user: userId }).populate('user').exec();
   }
 
-  async findByUser(userId: string): Promise<Post[]> {
-    return this.postModel.find({ user: userId }).exec();
+  async findAll() {
+    return this.postsModel.find().exec();
+  }
+
+  async findOne(id: Types.ObjectId) {
+    return this.postsModel.findById(new Types.ObjectId(id)).exec();
+  }
+
+  async update(id: Types.ObjectId, updatePostDto: UpdatePostDto) {
+    await this.postsModel.findByIdAndUpdate(id, updatePostDto);
+
+    const post = await this.postsModel.findById(new Types.ObjectId(id));
+
+    return post;
+  }
+
+  async remove(id: Types.ObjectId) {
+    return await this.postsModel.findByIdAndDelete(id);
   }
 }
