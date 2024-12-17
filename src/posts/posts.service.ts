@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -28,7 +28,11 @@ export class PostsService {
   }
 
   async findOne(id: Types.ObjectId) {
-    return this.postsModel.findById(new Types.ObjectId(id)).exec();
+    const findPost = await this.postsModel
+      .findById(new Types.ObjectId(id))
+      .exec();
+
+    return findPost;
   }
 
   async update(id: Types.ObjectId, updatePostDto: UpdatePostDto) {

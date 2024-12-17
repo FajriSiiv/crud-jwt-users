@@ -14,6 +14,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Types } from 'mongoose';
 import { RolesGuard } from './guards/roles.guard';
 import { UserPost } from './guards/userUpdate.guard';
+import { FindPost } from './guards/findPosts.guard';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('posts')
 export class PostsController {
@@ -21,6 +23,7 @@ export class PostsController {
 
   @Post()
   @UseGuards(RolesGuard)
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   create(@Body() body: CreatePostDto) {
     return this.postsService.createPost(body);
   }
@@ -31,11 +34,13 @@ export class PostsController {
   }
 
   @Get()
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   async findAll() {
     return this.postsService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(FindPost)
   async findOne(@Param('id') id: Types.ObjectId) {
     return this.postsService.findOne(id);
   }
@@ -48,6 +53,7 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @UseGuards(FindPost)
   @UseGuards(UserPost)
   async remove(
     @Param('id') id: string,
