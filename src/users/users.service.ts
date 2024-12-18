@@ -11,22 +11,38 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const newUser = new this.userModel(createUserDto);
+
     return newUser.save();
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    const users = await this.userModel.find().exec();
+
+    return users;
   }
 
-  async findOne(id: Types.ObjectId) {
-    return this.userModel.findById(new Types.ObjectId(id)).exec();
+  async findOne(id: string) {
+    const user = await this.userModel.findById(new Types.ObjectId(id)).exec();
+
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    await this.userModel.findByIdAndUpdate(
+      new Types.ObjectId(id),
+      updateUserDto,
+    );
+
+    const userUpdate = await this.userModel.findById(new Types.ObjectId(id));
+
+    return userUpdate;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const user = await this.userModel
+      .findByIdAndDelete(new Types.ObjectId(id))
+      .exec();
+
+    return { message: 'User telah dihapus', user };
   }
 }

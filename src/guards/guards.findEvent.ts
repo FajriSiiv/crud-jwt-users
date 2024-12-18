@@ -6,24 +6,26 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Posts } from '../schema/posts.schema';
 import { Model, Types } from 'mongoose';
+import { EventDocument, Events } from 'src/event/schema/eventSchema.schema';
 
 @Injectable()
-export class FindPost implements CanActivate {
-  constructor(@InjectModel(Posts.name) private postModel: Model<Posts>) {}
+export class FindEvent implements CanActivate {
+  constructor(
+    @InjectModel(Events.name) private eventModel: Model<EventDocument>,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const { id }: { id: string } = request.params;
 
-    const findPost = await this.postModel
+    const findEvent = await this.eventModel
       .findById(new Types.ObjectId(id))
       .exec();
 
-    if (!findPost) {
-      throw new HttpException('Tidak menemukan posts', HttpStatus.NOT_FOUND);
+    if (!findEvent) {
+      throw new HttpException('Tidak menemukan event', HttpStatus.NOT_FOUND);
     }
 
     return true;
