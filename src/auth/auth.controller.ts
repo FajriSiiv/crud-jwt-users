@@ -24,7 +24,6 @@ export class AuthController {
     const { access_token, user: userInfo } = await this.authService.login(
       user.name,
     );
-    console.log(access_token);
 
     res.cookie('access_token', access_token, {
       httpOnly: true,

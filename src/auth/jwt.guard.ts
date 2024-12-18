@@ -18,6 +18,7 @@ export class JwtAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest<Request>();
     const token = request.cookies['access_token'];
+    console.log(token);
 
     if (!token) {
       throw new UnauthorizedException('No token found');
@@ -28,7 +29,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const decoded = this.jwtService.verify(token);
+      const decoded = this.jwtService.verify(token, { secret: '12345' });
       request.user = decoded;
       return true;
     } catch (err) {
