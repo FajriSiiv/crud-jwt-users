@@ -3,7 +3,7 @@ import { Document, HydratedDocument } from 'mongoose';
 
 @Schema()
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, minlength: 3, maxlength: 50 })
   name: string;
 
   @Prop({ type: String, enum: ['admin', 'user'], default: 'user' })

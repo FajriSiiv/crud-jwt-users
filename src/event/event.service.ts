@@ -12,7 +12,30 @@ export class EventService {
   ) {}
 
   async create(createEventDto: CreateEventDto) {
-    const createEvent = new this.eventModel(createEventDto);
+    let dateObject: Date;
+
+    if (typeof createEventDto.date === 'string') {
+      const [month, day, year] = createEventDto.date.split('/');
+
+      dateObject = new Date(`${year}-${month}-${day}`);
+
+      if (isNaN(dateObject.getTime())) {
+        throw new HttpException(
+          'Invalid date format',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    } else {
+      throw new HttpException(
+        'Invalid date must be string',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const createEvent = new this.eventModel({
+      ...createEventDto,
+      date: dateObject,
+    });
 
     return createEvent.save();
   }

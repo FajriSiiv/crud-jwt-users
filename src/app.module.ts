@@ -10,12 +10,12 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    // ThrottlerModule.forRoot([
-    //   {
-    //     ttl: 60000,
-    //     limit: 10,
-    //   },
-    // ]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 1000,
+        limit: 10,
+      },
+    ]),
     MongooseModule.forRoot('mongodb://localhost:27017/events-org'),
     UsersModule,
     EventModule,
@@ -24,10 +24,10 @@ import { AuthModule } from './auth/auth.module';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ThrottlerGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

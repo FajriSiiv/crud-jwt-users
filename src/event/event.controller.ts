@@ -16,6 +16,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { FindEvent } from 'src/guards/guards.findEvent';
+import { RolesCheck } from 'src/guards/guards.roles';
 
 @Controller('event')
 @UseGuards(JwtAuthGuard)
@@ -23,6 +24,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
+  @UseGuards(RolesCheck)
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.create(createEventDto);
   }
@@ -39,6 +41,7 @@ export class EventController {
 
   @Patch('/addUser/:id')
   @UseGuards(FindEvent)
+  @UseGuards(RolesCheck)
   async addUserToEvent(
     @Param('id') id: string,
     @Body() addUserToEventDto: { userId: string },
@@ -54,11 +57,13 @@ export class EventController {
   }
 
   @Patch(':id')
+  @UseGuards(RolesCheck)
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventService.update(new Types.ObjectId(id), updateEventDto);
   }
 
   @Delete(':id')
+  @UseGuards(RolesCheck)
   remove(@Param('id') id: string) {
     return this.eventService.remove(new Types.ObjectId(id));
   }

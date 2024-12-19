@@ -11,7 +11,10 @@ import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { JwtAuthGuard } from './jwt.guard';
 import { TokenBlacklistService } from './token-blacklist.service';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateAuthDto } from './dto/create-auth.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -20,7 +23,10 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() user: { name: string }, @Res() res: Response) {
+  @ApiOperation({ summary: 'Login' })
+  @ApiResponse({ status: 201, description: 'Login successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid input data.' })
+  async login(@Body() user: CreateAuthDto, @Res() res: Response) {
     const { access_token, user: userInfo } = await this.authService.login(
       user.name,
     );
