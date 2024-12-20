@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schema/users.schema';
 import { Model, Types } from 'mongoose';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,13 @@ export class UsersService {
       throw new ConflictException('Email is already in use');
     }
 
-    const newUser = new this.userModel(createUserDto);
+    const saltRound = 10;
+    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRound);
+
+    const newUser = new this.userModel({
+      ...createUserDto,
+      password: hashedPassword,
+    });
 
     return newUser.save();
   }

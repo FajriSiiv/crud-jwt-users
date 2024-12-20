@@ -26,10 +26,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Login' })
   @ApiResponse({ status: 201, description: 'Login successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
-  async login(@Body() user: CreateAuthDto, @Res() res: Response) {
-    const { access_token, user: userInfo } = await this.authService.login(
-      user.name,
-    );
+  async login(@Body() createAuthDto: CreateAuthDto, @Res() res: Response) {
+    const { access_token, userRespond: userInfo } =
+      await this.authService.login(createAuthDto);
 
     res.cookie('access_token', access_token, {
       httpOnly: true,

@@ -9,16 +9,20 @@ import {
   NotFoundException,
   UseGuards,
   Res,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EventService } from './event.service';
-import { CreateEventDto } from './dto/create-event.dto';
+import { CreateEventDto, PaginationQueryDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { FindEvent } from 'src/guards/guards.findEvent';
 import { RolesCheck } from 'src/guards/guards.roles';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('event')
+@ApiTags('event')
 @UseGuards(JwtAuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
@@ -30,8 +34,24 @@ export class EventController {
   }
 
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  @ApiQuery({
+    name: 'page',
+    type: Number,
+    required: false,
+    description: 'Nomor halaman untuk pagination',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: Number,
+    required: false,
+    description: 'Jumlah item per halaman',
+    example: 3,
+  })
+  findAll(@Query() query: PaginationQueryDto) {
+    const { page = 1, limit = 3 } = query;
+
+    return this.eventService.findAll(page, limit);
   }
 
   @Get(':id')
@@ -48,10 +68,6 @@ export class EventController {
   ) {
     const { userId } = addUserToEventDto;
     const event = await this.eventService.addUserToEvent(id, userId);
-
-    // if (!event) {
-    //   throw new NotFoundException('Event tidak ditemukan');
-    // }
 
     return event;
   }

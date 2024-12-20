@@ -1,13 +1,34 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { MongooseExceptionFilter } from 'filters/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import bodyParser from 'body-parser';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new MongooseExceptionFilter());
+
+  app.enableCors({
+    // origin: (origin, callback) => {
+    //   const allowedOrigins = '*';
+    //   if (!origin || allowedOrigins.indexOf(origin) === -1) {
+    //     return callback(new Error('Not allowed by CORS'), false);
+    //   }
+    //   return callback(null, true);
+    // },
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
 
   const configSwagger = new DocumentBuilder()
     .setTitle('Event Org API')

@@ -7,6 +7,9 @@ export class CreateUserDto {
   name: string;
 
   @IsString()
+  password: string;
+
+  @IsString()
   @IsIn(['user', 'admin'], { message: 'Role harus "user" dan "admin"' })
   roles: string;
 }

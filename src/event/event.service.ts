@@ -42,9 +42,6 @@ export class EventService {
 
   async addUserToEvent(eventId: string, userId: string) {
     const event = await this.eventModel.findById(new Types.ObjectId(eventId));
-    // if (!event) {
-    //   throw new HttpException('Event tidak ditemukan', HttpStatus.NOT_FOUND);
-    // }
 
     if (!event.users.includes(new Types.ObjectId(userId))) {
       event.users.push(userId);
@@ -54,10 +51,31 @@ export class EventService {
     return event;
   }
 
-  async findAll(): Promise<Events[]> {
-    const events = await this.eventModel.find().exec();
+  async findAll(page: number, limit: number) {
+    const skip = (page - 1) * limit;
 
-    return events;
+    const events = await this.eventModel.find().skip(skip).limit(limit).exec();
+
+    const totalData = await this.eventModel.countDocuments();
+
+    if (events.length === 0) {
+      return {
+        message: `No data available in page ${page}`,
+        data: events,
+        total: totalData,
+        page,
+        limit,
+        totalPages: Math.ceil(totalData / limit),
+      };
+    }
+
+    return {
+      data: events,
+      total: totalData,
+      page,
+      limit,
+      totalPages: Math.ceil(totalData / limit),
+    };
   }
 
   async findOne(id: Types.ObjectId) {
