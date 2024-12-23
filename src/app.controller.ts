@@ -7,7 +7,7 @@ export class AppController {
     console.log(process.env.JWT_KEY, 'app module');
   }
 
-  @Get()
+  @Get('/hello')
   getHello(): string {
     return this.appService.getHello();
   }
