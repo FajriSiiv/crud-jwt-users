@@ -9,7 +9,7 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main.js",
-    "build": "tsc",
+    "build": "nest build",
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

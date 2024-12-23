@@ -2,11 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
+      "src": "package.json",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
