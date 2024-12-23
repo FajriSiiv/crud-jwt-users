@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,6 +17,12 @@ export class EventService {
   ) {}
 
   async create(createEventDto: CreateEventDto) {
+    const allUser = await this.eventModel.countDocuments();
+
+    if (allUser >= 2) {
+      throw new ConflictException('Max limit event 10');
+    }
+
     let dateObject: Date;
 
     if (typeof createEventDto.date === 'string') {

@@ -16,6 +16,12 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const allUser = await this.userModel.countDocuments();
+
+    if (allUser >= 10) {
+      throw new ConflictException('Max limit user 10');
+    }
+
     const userFound = await this.userModel
       .findOne({ name: createUserDto.name })
       .exec();
