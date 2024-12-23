@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
       },
     ]),
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/events-org'),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
     EventModule,
     AuthModule,

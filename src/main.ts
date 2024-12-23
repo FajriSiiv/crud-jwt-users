@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
-import serverless from 'serverless-http';
 import { MongooseExceptionFilter } from './filters/exception.filter';
 
 async function bootstrap() {
@@ -11,14 +10,14 @@ async function bootstrap() {
   app.useGlobalFilters(new MongooseExceptionFilter());
 
   app.enableCors({
-    origin: true,
-    // origin: (origin, callback) => {
-    //   const allowedOrigins = 'http://localhost:5173';
-    //   if (!origin || allowedOrigins.indexOf(origin) === -1) {
-    //     return callback(new Error('Not allowed by CORS'), false);
-    //   }
-    //   return callback(null, true);
-    // },
+    // origin: true,
+    origin: (origin, callback) => {
+      const allowedOrigins = process.env.FRONTEND_URL;
+      if (!origin || allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error('Not allowed by CORS'), false);
+      }
+      return callback(null, true);
+    },
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

@@ -3,9 +3,7 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {
-    console.log(process.env.JWT_KEY, 'app module');
-  }
+  constructor(private readonly appService: AppService) {}
 
   @Get('/hello')
   getHello(): string {
