@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node dist/main.js",
+    "start": "node dist/main",
     "build": "nest build",
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "start:dev": "nest start --watch",
@@ -37,12 +37,14 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "mongoose": "^8.8.4",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "serverless-http": "^3.2.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
