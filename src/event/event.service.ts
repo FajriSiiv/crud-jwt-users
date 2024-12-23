@@ -19,7 +19,7 @@ export class EventService {
   async create(createEventDto: CreateEventDto) {
     const allUser = await this.eventModel.countDocuments();
 
-    if (allUser >= 2) {
+    if (allUser >= 10) {
       throw new ConflictException('Max limit event 10');
     }
 

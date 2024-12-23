@@ -36,6 +36,8 @@ export class AuthController {
       secure: true,
       sameSite: 'none',
       path: '/',
+      partitioned: true,
+      maxAge: 12 * 60 * 60 * 1000,
     });
 
     return res.status(HttpStatus.OK).json({
@@ -53,7 +55,11 @@ export class AuthController {
     if (token) {
       this.tokenBlacklistService.addToBlacklist(token);
     }
-    res.clearCookie('access_token');
+    res.clearCookie('access_token', {
+      path: '/',
+      secure: true,
+      sameSite: 'none',
+    });
 
     return res
       .status(HttpStatus.OK)
