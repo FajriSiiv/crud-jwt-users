@@ -23,7 +23,9 @@ export class RolesCheck implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const token = request.cookies['access_token'];
 
-    const decoded = this.jwtService.verify(token, { secret: '12345' });
+    const decoded = this.jwtService.verify(token, {
+      secret: process.env.JWT_KEY,
+    });
     const userToken: { _id: string } = decoded.user;
 
     // const { userId }: { userId: string } = request.body;

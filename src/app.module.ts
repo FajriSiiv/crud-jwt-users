@@ -7,16 +7,18 @@ import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from './users/users.module';
 import { EventModule } from './event/event.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot([
       {
         ttl: 1000,
-        limit: 10,
+        limit: 50,
       },
     ]),
-    MongooseModule.forRoot('mongodb://localhost:27017/events-org'),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
     EventModule,
     AuthModule,

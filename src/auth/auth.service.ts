@@ -60,7 +60,7 @@ export class AuthService {
         throw new Error('Token not found in cookies');
       }
 
-      const secretKey = '12345';
+      const secretKey = process.env.JWT_KEY;
       const decodedJWT = this.jwtService.verify(token, { secret: secretKey });
       const decoded = decodedJWT.user;
 

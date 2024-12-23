@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RolesCheck } from 'src/guards/guards.roles';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -18,6 +21,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  // @UseGuards(RolesCheck)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({ status: 201, description: 'User created successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input data.' })
@@ -26,6 +30,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved users.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -34,6 +39,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved user.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -42,6 +48,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesCheck)
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiResponse({ status: 200, description: 'Successfully updated user.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
@@ -52,6 +60,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesCheck)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiResponse({ status: 200, description: 'Successfully deleted user.' })
   @ApiResponse({ status: 400, description: 'Bad request.' })
