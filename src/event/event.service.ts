@@ -43,8 +43,21 @@ export class EventService {
   async addUserToEvent(eventId: string, userId: string) {
     const event = await this.eventModel.findById(new Types.ObjectId(eventId));
 
+    const findUser = await this.eventModel.findOne({
+      _id: new Types.ObjectId(eventId),
+      users: new Types.ObjectId(userId),
+    });
+
+    if (findUser) {
+      throw new Error('User already join the event');
+    }
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
     if (!event.users.includes(new Types.ObjectId(userId))) {
-      event.users.push(userId);
+      event.users.push(new Types.ObjectId(userId));
       await event.save();
     }
 

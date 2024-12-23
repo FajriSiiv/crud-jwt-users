@@ -50,7 +50,6 @@ export class EventController {
   })
   findAll(@Query() query: PaginationQueryDto) {
     const { page = 1, limit = 3 } = query;
-
     return this.eventService.findAll(page, limit);
   }
 
@@ -61,7 +60,6 @@ export class EventController {
 
   @Patch('/addUser/:id')
   @UseGuards(FindEvent)
-  @UseGuards(RolesCheck)
   async addUserToEvent(
     @Param('id') id: string,
     @Body() addUserToEventDto: { userId: string },
@@ -69,7 +67,11 @@ export class EventController {
     const { userId } = addUserToEventDto;
     const event = await this.eventService.addUserToEvent(id, userId);
 
-    return event;
+    return {
+      status: 'success',
+      message: 'User added to event',
+      event,
+    };
   }
 
   @Patch(':id')

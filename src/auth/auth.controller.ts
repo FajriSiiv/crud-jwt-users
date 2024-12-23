@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Req,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
@@ -34,6 +35,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
+      path: '/',
     });
 
     return res.status(HttpStatus.OK).json({
@@ -56,5 +58,11 @@ export class AuthController {
     return res
       .status(HttpStatus.OK)
       .json({ message: 'Successfully logged out' });
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async userMe(@Req() req: Request) {
+    return await this.authService.userMe(req);
   }
 }

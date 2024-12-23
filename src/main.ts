@@ -10,14 +10,14 @@ async function bootstrap() {
   app.useGlobalFilters(new MongooseExceptionFilter());
 
   app.enableCors({
-    // origin: (origin, callback) => {
-    //   const allowedOrigins = '*';
-    //   if (!origin || allowedOrigins.indexOf(origin) === -1) {
-    //     return callback(new Error('Not allowed by CORS'), false);
-    //   }
-    //   return callback(null, true);
-    // },
-    origin: '*',
+    // origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+      const allowedOrigins = 'http://localhost:5173';
+      if (!origin || allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error('Not allowed by CORS'), false);
+      }
+      return callback(null, true);
+    },
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

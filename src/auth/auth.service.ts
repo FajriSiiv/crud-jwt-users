@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/users/schema/users.schema';
 import * as bcrypt from 'bcrypt';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -50,5 +51,22 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       userRespond,
     };
+  }
+
+  async userMe(req: Request) {
+    const token = req.cookies?.access_token;
+    try {
+      if (!token) {
+        throw new Error('Token not found in cookies');
+      }
+
+      const secretKey = '12345';
+      const decodedJWT = this.jwtService.verify(token, { secret: secretKey });
+      const decoded = decodedJWT.user;
+
+      return { id: decoded._id, user: decoded.name, roles: decoded.roles };
+    } catch (error) {
+      throw new Error('Invalid token or user not authenticated');
+    }
   }
 }
