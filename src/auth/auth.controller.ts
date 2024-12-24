@@ -38,6 +38,7 @@ export class AuthController {
       path: '/',
       partitioned: true,
       maxAge: 12 * 60 * 60 * 1000,
+      expires: new Date(Date.now() + 12 * 60 * 60 * 1000),
     });
 
     return res.status(HttpStatus.OK).json({
